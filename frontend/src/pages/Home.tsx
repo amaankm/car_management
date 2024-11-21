@@ -1,3 +1,4 @@
+import { useQuery } from "@tanstack/react-query";
 import View from "../components/View";
 
 const cars = [
@@ -81,9 +82,29 @@ const cars = [
 ];
 
 const Home = () => {
+  const {
+    data: Cars,
+    // isLoading,
+    // refetch,
+    // isRefetching,
+  } = useQuery({
+    queryKey: ["posts"],
+    queryFn: async () => {
+      try {
+        const res = await fetch("/api/cars");
+        const data = await res.json();
+
+        if (!res.ok) throw new Error(data.error || "Something went wrong");
+        return data;
+      } catch (error) {
+        throw new Error(error);
+      }
+    },
+  });
+
   return (
     <div className="container flex flex-col gap-10 mx-auto">
-      <View cars={cars} />
+      <View cars={Cars} />
     </div>
   );
 };
